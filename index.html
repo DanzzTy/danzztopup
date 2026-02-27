@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>DANZZ STORE • Top Up Games</title>
+    
+    <meta property="og:title" content="Danzz Store Ramadhan - Top Up Games Cepat & Murah">
+    <meta property="og:description" content="Selamat datang di Danzz Store! Nikmati kemudahan top up game favorit dengan nuansa Ramadhan penuh berkah.">
+    <meta property="og:image" content="http://gambar-to-url.vercel.app/9d620a.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://topupgegw.vercel.app">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="id_ID">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Danzz Store Ramadhan - Top Up Games">
+    <meta name="twitter:description" content="Top up game termurah dengan nuansa Ramadhan hijau terang. Ada ketupat lucu!">
+    <meta name="twitter:image" content="http://gambar-to-url.vercel.app/9d620a.jpg">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LdzzXMsAAAAACm1F_Xh8AbqtYp4GXcqSeYsgkMw"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="icon" href="http://upload-image-ten.vercel.app/6b47e1.jpg" sizes="any">
+    <link rel="shortcut icon" href="http://upload-image-ten.vercel.app/6b47e1.jpg" type="image/x-icon">
+    <link rel="apple-touch-icon" href="http://upload-image-ten.vercel.app/6b47e1.jpg">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: linear-gradient(180deg, #ecfdf5 0%, #f0fdf4 50%, #ffffff 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- ANIMASI KETUPAT --- */
+        .ketupat-container { position: fixed; top: -10px; z-index: 50; pointer-events: none; will-change: transform; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .k-left { left: 20px; animation: swingLeft 4s ease-in-out infinite alternate; transform-origin: top center; }
+        .k-right { right: 20px; animation: swingRight 5s ease-in-out infinite alternate; transform-origin: top center; }
+        @keyframes swingLeft { 0% { transform: rotate(5deg); } 100% { transform: rotate(-5deg); } }
+        @keyframes swingRight { 0% { transform: rotate(-5deg); } 100% { transform: rotate(5deg); } }
+
+        /* --- GLASS NAVBAR --- */
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(22, 163, 74, 0.2); position: sticky; top: 0; z-index: 40; }
+
+        /* --- CARD HOVER --- */
+        .game-card { transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.2s ease; will-change: transform; }
+        .game-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px rgba(22, 163, 74, 0.2); border-color: #86efac; }
+        
+        .item-card { transition: all 0.2s ease; border: 1px solid #e2e8f0; cursor: pointer; }
+        .item-card.selected { border-color: #16a34a; background-color: #f0fdf4; box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.1); }
+        .item-card:hover:not(.selected) { border-color: #86efac; }
+        .item-disabled { opacity: 0.6; pointer-events: none; background-color: #f1f5f9; cursor: not-allowed; }
+
+        /* Scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animations */
+        .modal-enter { animation: modalUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes modalUp { from { opacity: 0; transform: scale(0.98) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .badge-pop { animation: pop 0.3s ease-out; }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
+
+        .marquee-wrapper { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(5px); border-bottom: 1px solid rgba(22, 163, 74, 0.1); }
+        
+        /* Sub Tab Active */
+        .subtab-btn { border-bottom: 2px solid transparent; color: #64748b; transition: all 0.2s; }
+        .subtab-btn.active { border-color: #16a34a; color: #16a34a; font-weight: bold; }
+        
+        /* Image Notif Popup */
+        .img-notif-enter { animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div class="ketupat-container k-left hidden md:block">
+        <svg width="90" height="150" viewBox="0 0 100 160" fill="none">
+            <path d="M50 0 V30" stroke="#15803d" stroke-width="3"/>
+            <path d="M50 30 L85 65 L50 100 L15 65 Z" fill="#4ade80" stroke="#166534" stroke-width="2"/>
+            <path d="M50 30 V100 M15 65 H85" stroke="#166534" stroke-width="1" stroke-opacity="0.3"/>
+            <path d="M32 48 L68 82 M68 48 L32 82" stroke="#166534" stroke-width="1" stroke-opacity="0.3"/>
+            <path d="M50 100 Q30 130 20 145" stroke="#15803d" stroke-width="2" fill="none"/>
+            <path d="M50 100 Q70 130 80 145" stroke="#15803d" stroke-width="2" fill="none"/>
+        </svg>
+    </div>
+
+    <div class="ketupat-container k-right">
+        <svg width="100" height="160" viewBox="0 0 100 160" fill="none">
+            <path d="M50 0 V25" stroke="#15803d" stroke-width="3"/>
+            <path d="M50 25 L90 65 L50 105 L10 65 Z" fill="#bbf7d0" stroke="#166534" stroke-width="2"/>
+            <path d="M50 25 V105 M10 65 H90" stroke="#166534" stroke-width="1" stroke-opacity="0.3"/>
+            <path d="M30 45 L70 85 M70 45 L30 85" stroke="#166534" stroke-width="1" stroke-opacity="0.3"/>
+            <path d="M50 105 Q35 135 25 150" stroke="#15803d" stroke-width="2" fill="none"/>
+            <path d="M50 105 Q65 135 75 150" stroke="#15803d" stroke-width="2" fill="none"/>
+        </svg>
+    </div>
+
+    <nav class="glass-nav">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <img src="http://upload-image-ten.vercel.app/6b47e1.jpg" alt="Logo" class="w-10 h-10 rounded-xl shadow-md border-2 border-white object-cover">
+                    <div class="flex flex-col leading-none">
+                        <span class="text-xl font-extrabold text-gray-800 tracking-tight">JUN <span class="text-green-600">STORE</span></span>
+                        <span class="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Top Up Games</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <a href="/mutasi" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-full transition relative group" title="Cek Pesanan">
+                        <i class="fas fa-receipt text-lg"></i>
+                    </a>
+                    <a href="/h2h/ajukan" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-yellow-500 hover:bg-yellow-50 rounded-full transition relative group" title="Daftar Mitra H2H">
+                        <i class="fas fa-network-wired text-lg"></i>
+                    </a>
+                    <a href="/support" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition relative group" title="Hubungi CS">
+                        <i class="fas fa-headset text-lg"></i>
+                    </a>
+                    <button onclick="toggleNotifPanel()" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-full transition relative group">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span id="notifBadge" class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full hidden border border-white shadow-sm">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="notifPanel" class="fixed top-16 right-4 md:right-auto md:left-auto md:ml-auto w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 hidden origin-top-right transform transition-all duration-200">
+        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
+            <h3 class="font-bold text-gray-800 text-sm">Notifikasi</h3>
+            <button onclick="clearNotifs()" class="text-xs text-red-500 hover:underline">Tandai Dibaca</button>
+        </div>
+        <div id="notifList" class="max-h-80 overflow-y-auto p-2 space-y-2">
+            <div class="text-center py-8 text-gray-400 text-xs">Belum ada notifikasi baru</div>
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4 pb-24 pt-6">
+
+        <div class="mb-4">
+            <div class="relative w-full rounded-2xl overflow-hidden shadow-xl shadow-green-200/50 bg-white border border-green-100 h-40 md:h-80 group">
+                <div id="bannerContainer" class="flex w-full h-full" style="will-change: transform;">
+                    <div class="w-full flex-shrink-0 h-full flex flex-col items-center justify-center bg-gradient-to-br from-green-50 to-white text-green-600 animate-pulse">
+                        <i class="fas fa-image text-3xl mb-2"></i>
+                        <span class="font-medium text-sm">Memuat Promo Ramadhan...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="marquee-wrapper rounded-xl mb-10 py-2.5 px-4 flex items-center gap-3 shadow-sm border border-green-100/50">
+            <i class="fas fa-bullhorn text-green-500 animate-pulse shrink-0"></i>
+            <marquee direction="left" scrollamount="5" class="w-full text-[11px] font-medium text-green-700 tracking-wide" id="runningText">Memuat informasi terkini dari server pusat...</marquee>
+        </div>
+
+        <div class="max-w-xl mx-auto mb-12 relative group">
+            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400 group-focus-within:text-green-500 transition text-lg"></i>
+            </div>
+            <input type="text" id="searchInput" placeholder="Cari Game (Free Fire, MLBB)..." 
+                onkeyup="filterGames()"
+                class="w-full pl-12 pr-6 py-4 rounded-2xl border border-gray-200 shadow-sm focus:ring-4 focus:ring-green-100 focus:border-green-500 bg-white transition outline-none text-gray-700 placeholder-gray-400 text-lg">
+        </div>
+
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-1.5 h-8 bg-green-600 rounded-full"></div>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">Pilih Game</h2>
+                <p class="text-sm text-gray-500">Katalog Ramadhan 1447H</p>
+            </div>
+        </div>
+
+        <div id="gamesGrid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-8">
+            <div class="col-span-full py-20 text-center">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mb-2"></div>
+                <p class="text-gray-500 font-medium">Sedang memuat data...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-green-100 py-10 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="font-bold text-gray-800 text-lg mb-2">DANZZ STORE</p>
+            <p class="text-gray-500 text-sm">🌙 Spesial Ramadhan &copy; 2026</p>
+        </div>
+    </footer>
+
+    <div id="productModal" class="fixed inset-0 z-50 hidden transition-opacity duration-300">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="absolute bottom-0 md:top-1/2 md:left-1/2 md:bottom-auto md:-translate-x-1/2 md:-translate-y-1/2 w-full md:w-[900px] max-w-full md:rounded-2xl bg-white shadow-2xl flex flex-col max-h-[90vh] modal-enter rounded-t-2xl overflow-hidden">
+            
+            <div class="p-5 border-b flex justify-between items-center bg-white sticky top-0 z-20 shadow-sm shrink-0">
+                <div class="flex items-center gap-4">
+                    <img id="modalGameImg" src="" class="w-12 h-12 rounded-xl object-contain bg-gray-50 border border-gray-100 p-1">
+                    <div>
+                        <h3 id="modalGameTitle" class="font-bold text-gray-900 text-xl leading-none mb-1">Nama Game</h3>
+                        <p class="text-xs text-gray-500 font-medium bg-green-50 text-green-600 px-2 py-0.5 rounded inline-block">Instant Process</p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto bg-gray-50 p-5 flex flex-col relative">
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                    <div class="flex gap-4 border-b border-gray-100 mb-4" id="modalSubTabs">
+                        <button onclick="filterModalTab('reguler')" id="tab-reguler" class="subtab-btn active pb-3 text-sm font-medium w-1/2 text-center">Item Reguler</button>
+                        <button onclick="filterModalTab('member')" id="tab-member" class="subtab-btn pb-3 text-sm font-medium w-1/2 text-center">Membership</button>
+                    </div>
+                    <div id="modalItemsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pb-4"></div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div id="imageNotifModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-sm" onclick="closeImageNotif()"></div>
+        <div class="relative bg-transparent rounded-3xl w-full max-w-sm flex flex-col items-center img-notif-enter z-10">
+            <button onclick="closeImageNotif()" class="absolute -top-10 right-0 w-8 h-8 bg-white/20 text-white rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition backdrop-blur-md">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="imageNotifSrc" src="" class="w-full h-auto max-h-[70vh] object-contain rounded-2xl shadow-2xl border-4 border-white/20">
+        </div>
+    </div>
+
+    <script>
+        let allProducts = [];
+        let groupedGames = {};
+        let savedNotifs = []; 
+        let currentActiveGame = null;
+        let unreadCount = 0;
+
+        const BLACKLIST = ['rules of survival', 'ros', 'ragnarok', 'love nikki', 'magic chess', 'point blank', 'pb', 'auto chess', 'legacy of discord'];
+
+        const PROVIDER_MAP = {
+            'free fire': 'Free Fire', 'mobile legends': 'Mobile Legends',
+            'pubg mobile': 'PUBG Mobile', 'genshin impact': 'Genshin Impact',
+            'honkai': 'Honkai Star Rail', 'valorant': 'Valorant', 
+            'higgs domino': 'Higgs Domino', 'call of duty': 'Call of Duty Mobile'
+        };
+
+        async function init() {
+            await loadUiData(); 
+            await fetchProducts(); 
+        }
+
+        async function loadUiData() {
+            try {
+                const res = await axios.get('/api/ui-data');
+                const { banners, notifs } = res.data;
+                
+                // --- RENDER BANNERS (SLIDE KANAN KE KIRI TANPA MUNDUR) ---
+                const bannerCont = document.getElementById('bannerContainer');
+                if (banners && banners.length > 0) {
+                    bannerCont.innerHTML = banners.map(b => `
+                        <div class="w-full flex-shrink-0 h-full bg-cover bg-center" style="background-image: url('${b.image_url}');"></div>
+                    `).join('');
+
+                    if (banners.length > 1) {
+                        setInterval(() => {
+                            bannerCont.style.transition = 'transform 0.5s ease-in-out';
+                            bannerCont.style.transform = 'translateX(-100%)';
+                            
+                            setTimeout(() => {
+                                bannerCont.style.transition = 'none';
+                                bannerCont.appendChild(bannerCont.firstElementChild);
+                                bannerCont.style.transform = 'translateX(0)';
+                            }, 500); 
+                        }, 5000); 
+                    }
+                } else {
+                    bannerCont.innerHTML = `<div class="w-full flex-shrink-0 h-full flex flex-col items-center justify-center bg-gradient-to-r from-green-400 to-emerald-500 text-white p-6 text-center"><h2 class="text-3xl font-bold">RAMADHAN BIG SALE</h2></div>`;
+                }
+
+                // --- RENDER NOTIFIKASI ---
+                if(notifs && notifs.length > 0) {
+                    savedNotifs = notifs;
+                    
+                    const imgNotif = notifs.find(n => n.message.match(/\.(jpeg|jpg|gif|png)$/i) != null);
+                    const textNotifs = notifs.filter(n => n !== imgNotif);
+
+                    document.getElementById('runningText').innerHTML = textNotifs.map(n => n.message).join(' &nbsp;&bull;&nbsp; ');
+                    
+                    if(imgNotif) {
+                        document.getElementById('imageNotifSrc').src = imgNotif.message;
+                        document.getElementById('imageNotifModal').classList.remove('hidden');
+                    }
+
+                    if(textNotifs.length > 0) {
+                        unreadCount = textNotifs.length;
+                        const badge = document.getElementById('notifBadge');
+                        badge.innerText = unreadCount > 9 ? '9+' : unreadCount;
+                        badge.classList.remove('hidden');
+                        badge.classList.add('badge-pop'); 
+                        
+                        renderNotifPanel(textNotifs);
+                    }
+                }
+            } catch (err) {}
+        }
+
+        function closeImageNotif() {
+            document.getElementById('imageNotifModal').classList.add('hidden');
+        }
+
+        function toggleNotifPanel() {
+            const panel = document.getElementById('notifPanel');
+            const badge = document.getElementById('notifBadge');
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                unreadCount = 0; badge.classList.add('hidden'); 
+            } else { panel.classList.add('hidden'); }
+        }
+
+        function renderNotifPanel(texts) {
+            const list = document.getElementById('notifList');
+            if(texts && texts.length > 0) {
+                list.innerHTML = texts.map(n => `
+                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start gap-3">
+                        <div class="w-2 h-2 rounded-full bg-green-500 mt-1.5 shrink-0 animate-pulse"></div>
+                        <p class="text-xs text-gray-600 leading-relaxed">${n.message}</p>
+                    </div>
+                `).join('');
+            } else {
+                list.innerHTML = `<div class="text-center py-8 text-gray-400 text-xs">Kosong</div>`;
+            }
+        }
+
+        function clearNotifs() { 
+            savedNotifs = []; 
+            document.getElementById('notifList').innerHTML = `<div class="text-center py-8 text-gray-400 text-xs">Kosong</div>`;
+            document.getElementById('notifPanel').classList.add('hidden'); 
+        }
+
+        // --- BACKEND LOGIC: FORMAT HARGA MARKUP + DEPOSIT + ADMIN ---
+        async function fetchProducts() {
+            try {
+                // Di backend index.js, /api/products/prabayar sudah menambahkan margin profit (settings.margin_rupiah)
+                // ke dalam price_selling. 
+                const res = await axios.get('/api/products/prabayar');
+                
+                if(res.data.status) {
+                    allProducts = res.data.data.filter(p => {
+                        const cat = (p.category || '').toLowerCase();
+                        const nameLower = (p.name || '').toLowerCase();
+                        const providerLower = (p.provider || p.brand || '').toLowerCase();
+
+                        if (!cat.includes('games') && !cat.includes('voucher game')) return false;
+                        if (BLACKLIST.some(b => nameLower.includes(b) || providerLower.includes(b))) return false;
+                        return true;
+                    });
+
+                    // Modifikasi price_selling (Terapkan + 1.4% + 200)
+                    allProducts = allProducts.map(p => {
+                        let currentPrice = parseInt(p.price_selling);
+                        // Hitung fee QRIS 1.4%
+                        let feeQris = currentPrice * 0.014;
+                        // Harga Jual = Harga saat ini + Fee QRIS + 200 Admin
+                        let finalMarkupPrice = Math.ceil(currentPrice + feeQris + 200);
+
+                        return {
+                            ...p,
+                            price_selling: finalMarkupPrice
+                        };
+                    });
+
+                    groupedGames = {};
+                    allProducts.forEach(p => {
+                        let providerRaw = (p.provider || p.brand || '').trim();
+                        let nameRaw = p.name.toLowerCase();
+
+                        if (!providerRaw || providerRaw === '-' || providerRaw === 'null') {
+                            if(nameRaw.includes('free fire')) providerRaw = 'Free Fire';
+                            else if(nameRaw.includes('mobile legends')) providerRaw = 'Mobile Legends';
+                            else providerRaw = 'Unknown Game';
+                        }
+
+                        let cleanProvider = providerRaw;
+                        Object.keys(PROVIDER_MAP).forEach(key => { if (providerRaw.toLowerCase().includes(key)) cleanProvider = PROVIDER_MAP[key]; });
+                        const groupKey = cleanProvider.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+                        if(!groupedGames[groupKey]) {
+                            groupedGames[groupKey] = { name: cleanProvider, image: p.img_url || 'https://cdn-icons-png.flaticon.com/512/686/686589.png', items: [] };
+                        }
+                        if(!groupedGames[groupKey].items.find(i => i.code === p.code)) groupedGames[groupKey].items.push(p);
+                    });
+                    renderGamesGrid(groupedGames);
+                } else { document.getElementById('gamesGrid').innerHTML = `<p class="col-span-full text-center text-red-500 font-bold">Gagal mengambil data.</p>`; }
+            } catch (err) { document.getElementById('gamesGrid').innerHTML = `<p class="col-span-full text-center text-red-500 font-bold">Terjadi kesalahan koneksi.</p>`; }
+        }
+
+        function renderGamesGrid(gamesObj) {
+            const grid = document.getElementById('gamesGrid');
+            grid.innerHTML = '';
+            const gameKeys = Object.keys(gamesObj).sort();
+            if(gameKeys.length === 0) { grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">Kosong.</p>`; return; }
+
+            gameKeys.forEach(key => {
+                const game = gamesObj[key];
+                if(game.items.length === 0) return;
+                const card = document.createElement('div');
+                card.className = 'game-card bg-white rounded-2xl p-4 cursor-pointer border border-green-50 flex flex-col items-center gap-3 relative overflow-hidden group';
+                card.onclick = () => openGameModal(key);
+                card.innerHTML = `<div class="relative w-full aspect-[1/1] rounded-xl overflow-hidden bg-gray-50 shadow-inner p-1 border border-gray-100"><img src="${game.image}" class="w-full h-full object-contain transition duration-500 group-hover:scale-110" loading="lazy"></div><div class="text-center w-full"><h3 class="font-bold text-gray-800 text-sm md:text-base truncate px-1">${game.name}</h3><p class="text-xs text-green-500 mt-0.5 font-medium">${game.items.length} Layanan</p></div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterGames() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filteredObj = {};
+            Object.keys(groupedGames).forEach(key => {
+                if(groupedGames[key].name.toLowerCase().includes(query)) filteredObj[key] = groupedGames[key];
+            });
+            renderGamesGrid(filteredObj);
+        }
+
+        function openGameModal(gameKey) {
+            currentActiveGame = groupedGames[gameKey];
+            
+            document.getElementById('modalGameTitle').innerText = currentActiveGame.name;
+            document.getElementById('modalGameImg').src = currentActiveGame.image;
+            
+            filterModalTab('reguler'); // Default load reguler items
+
+            const modal = document.getElementById('productModal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function filterModalTab(type) {
+            document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-${type}`).classList.add('active');
+
+            const grid = document.getElementById('modalItemsGrid');
+            grid.innerHTML = '';
+
+            let items = currentActiveGame.items;
+            items.sort((a, b) => a.price_selling - b.price_selling);
+
+            let filteredItems = items.filter(p => {
+                const n = p.name.toLowerCase();
+                const isMem = n.includes('member') || n.includes('weekly') || n.includes('monthly') || n.includes('starlight') || n.includes('pass') || n.includes('twilight');
+                return type === 'member' ? isMem : !isMem;
+            });
+
+            if(filteredItems.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-400 py-6 text-sm">Tidak ada item di kategori ini.</p>`;
+                return;
+            }
+
+            filteredItems.forEach(item => {
+                const isAvailable = item.status === 'available';
+                let cleanName = item.name.replace(new RegExp(currentActiveGame.name, 'gi'), '').replace(/[-–:|]/g, '').trim(); 
+                if(cleanName.length < 2) cleanName = item.name;
+
+                const cardClass = isAvailable ? 'item-card bg-white' : 'item-disabled';
+                const el = document.createElement('div');
+                el.className = `${cardClass} p-3 rounded-xl relative flex flex-col justify-between h-full group`;
+                
+                if(isAvailable) {
+                    el.onclick = () => goToPayment(item.code, item.name, item.price_selling, currentActiveGame.image, currentActiveGame.name);
+                }
+
+                el.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="${isAvailable?'bg-green-500':'bg-red-500'} w-2 h-2 rounded-full mt-1.5 shadow-sm"></span>
+                            ${!isAvailable ? `<span class="text-[10px] font-bold text-red-500 bg-red-100 px-1.5 py-0.5 rounded">GANGGUAN</span>` : ''}
+                        </div>
+                        <h4 class="font-semibold text-gray-700 text-sm leading-tight mb-2 group-hover:text-green-600 transition">${cleanName}</h4>
+                    </div>
+                    <p class="text-green-600 font-bold text-sm">Rp ${parseInt(item.price_selling).toLocaleString('id-ID')}</p>
+                `;
+                grid.appendChild(el);
+            });
+        }
+
+        // --- REDIRECT LOGIC ---
+        function goToPayment(code, name, price, imgUrl, providerName) {
+            const data = { 
+                code, 
+                name, 
+                price, // Price ini sudah termarkup dengan 1.4% + 200 
+                img_url: imgUrl,
+                provider: providerName,
+                category: "Games",
+                type: "prabayar"
+            };
+            localStorage.setItem('selectedProduct', JSON.stringify(data));
+            window.location.href = '/payment';
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        async function trackVisitor() {
+    grecaptcha.ready(function() {
+        grecaptcha.execute('SITE_KEY_ANDA_DISINI', {action: 'homepage'}).then(async function(token) {
+            try {
+                // Kirim request track visitor beserta tokennya
+                await axios.post('/api/track-visitor', { recaptcha_token: token });
+            } catch(e) {
+                console.log("Gagal mencatat visitor");
+            }
+        });
+    });
+}
+
+// Jalankan saat halaman dimuat
+trackVisitor();
+init();
+    </script>
+</body>
+  </html>
