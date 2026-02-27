@@ -1,0 +1,50 @@
+
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: linear-gradient(180deg, #ecfdf5 0%, #f0fdf4 50%, #ffffff 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- ANIMASI KETUPAT --- */
+        .ketupat-container { position: fixed; top: -10px; z-index: 50; pointer-events: none; will-change: transform; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .k-left { left: 20px; animation: swingLeft 4s ease-in-out infinite alternate; transform-origin: top center; }
+        .k-right { right: 20px; animation: swingRight 5s ease-in-out infinite alternate; transform-origin: top center; }
+        @keyframes swingLeft { 0% { transform: rotate(5deg); } 100% { transform: rotate(-5deg); } }
+        @keyframes swingRight { 0% { transform: rotate(-5deg); } 100% { transform: rotate(5deg); } }
+
+        /* --- GLASS NAVBAR --- */
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(22, 163, 74, 0.2); position: sticky; top: 0; z-index: 40; }
+
+        /* --- CARD HOVER --- */
+        .game-card { transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.2s ease; will-change: transform; }
+        .game-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px rgba(22, 163, 74, 0.2); border-color: #86efac; }
+        
+        .item-card { transition: all 0.2s ease; border: 1px solid #e2e8f0; cursor: pointer; }
+        .item-card.selected { border-color: #16a34a; background-color: #f0fdf4; box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.1); }
+        .item-card:hover:not(.selected) { border-color: #86efac; }
+        .item-disabled { opacity: 0.6; pointer-events: none; background-color: #f1f5f9; cursor: not-allowed; }
+
+        /* Scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animations */
+        .modal-enter { animation: modalUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes modalUp { from { opacity: 0; transform: scale(0.98) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .badge-pop { animation: pop 0.3s ease-out; }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
+
+        .marquee-wrapper { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(5px); border-bottom: 1px solid rgba(22, 163, 74, 0.1); }
+        
+        /* Sub Tab Active */
+        .subtab-btn { border-bottom: 2px solid transparent; color: #64748b; transition: all 0.2s; }
+        .subtab-btn.active { border-color: #16a34a; color: #16a34a; font-weight: bold; }
+        
+        /* Image Notif Popup */
+        .img-notif-enter { animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+    
